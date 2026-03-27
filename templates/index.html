@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attack Surface Mapper</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f4f9; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .critical { color: red; font-weight: bold; }
+        .high { color: orange; font-weight: bold; }
+        .medium { color: goldenrod; font-weight: bold; }
+        .low { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Attack Surface Mapper & Risk Prioritizer</h2>
+        <form method="POST">
+            <input type="text" name="domain" placeholder="example.com" required style="padding: 10px; width: 70%;">
+            <button type="submit" style="padding: 10px;">Scan Target</button>
+        </form>
+
+        {% if domain %}
+            <hr>
+            <h3>Results for: {{ domain }}</h3>
+            <h4>Subdomains found:</h4>
+            <ul>
+                {% for sub in subs %}<li>{{ sub }}</li>{% endfor %}
+            </ul>
+            
+            <h4>Overall Risk: <span class="{{ risk_data.risk_level|lower }}">{{ risk_data.risk_level }}</span></h4>
+            
+            <h4>Vulnerability Findings:</h4>
+            <ul>
+                {% for item in risk_data.findings %}
+                    <li><span class="{{ item.severity|lower }}">[{{ item.severity }}]</span> {{ item.issue }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>
