@@ -16,6 +16,41 @@ class AttackSurfaceScanner:
             "https_enabled": False,
             "mock_vulnerabilities": []
         }
+    def check_tech_stack(self):
+        """Identifies server technology and potential version disclosure."""
+        url = f"http://{self.domain}"
+        tech_findings = {
+            "server": "Unknown",
+            "powered_by": "Hidden",
+            "info_leak": False
+        }
+        try:
+            response = requests.get(url, timeout=5)
+            server = response.headers.get("Server")
+            powered_by = response.headers.get("X-Powered-By")
+
+            if server:
+                tech_findings["server"] = server
+                # If the server string contains a version number (e.g., Apache/2.4.41)
+                if any(char.isdigit() for char in server):
+                    tech_findings["info_leak"] = True
+            
+            if powered_by:
+                tech_findings["powered_by"] = powered_by
+                tech_findings["info_leak"] = True
+
+            self.scan_results["tech_stack"] = tech_findings
+        except requests.RequestException:
+            self.scan_results["tech_stack"] = tech_findings
+
+    # Update your run_all to include this:
+    def run_all(self):
+        self.discover_subdomains()
+        self.scan_ports()
+        self.check_web_security()
+        self.check_tech_stack() # New Real Check
+        # self.mock_xss_test()  # Keep commented out or delete
+        return self.scan_results
 
     def discover_subdomains(self):
         """Basic mock subdomain enumeration via DNS resolution."""
