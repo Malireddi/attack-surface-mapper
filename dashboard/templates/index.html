@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Vulnerability Scanner Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="url"] { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        button { padding: 12px 24px; background-color: #2980b9; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { background-color: #34495e; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #2c3e50; color: white; }
+        /* Severity Badges */
+        .badge { padding: 6px 12px; border-radius: 4px; font-weight: bold; display: inline-block; text-align: center; }
+        .badge.Critical { background-color: red; color: white; } /* [cite: 29] */
+        .badge.High { background-color: orange; color: white; } /*  */
+        .badge.Medium { background-color: yellow; color: black; } /* [cite: 28] */
+        .error { color: red; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vulnerability Scanner</h1>
+        
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form action="/scan" method="POST" class="search-box">
+            <input type="url" name="url" placeholder="Enter target URL (e.g., http://testphp.vulnweb.com/)" required>
+            <button type="submit">Scan</button>
+        </form>
+
+        {% if results is not none %}
+            <h2>Scan Results for: {{ target }}</h2>
+            
+            {% if results|length == 0 %}
+                <p>No vulnerabilities found. The target appears secure against these basic payloads.</p>
+            {% else %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Severity</th>
+                            <th>URL / Parameter</th>
+                            <th>Payload Used</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vuln in results %}
+                        <tr>
+                            <td>{{ vuln.type }}</td>
+                            <td><span class="badge {{ vuln.severity }}">{{ vuln.severity }}</span></td>
+                            <td>{{ vuln.url }}</td>
+                            <td><code>{{ vuln.payload }}</code></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+    "target": "http://testphp.vulnweb.com",
+    "scan_time": "2026-03-28 19:00:04",
+    "total_vulnerabilities": 0,
+    "findings": []
+}

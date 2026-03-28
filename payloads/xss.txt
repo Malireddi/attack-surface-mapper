@@ -1,0 +1,4 @@
+<script>alert('XSS_TEST_PAYLOAD')</script>
+"><script>alert('XSS_TEST_PAYLOAD')</script>
+<img src=x onerror=alert('XSS_TEST_PAYLOAD')>
+' autofocus onfocus=alert('XSS_TEST_PAYLOAD')>
